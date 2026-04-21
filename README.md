@@ -21,3 +21,7 @@ make
 - Nyelv: **C**
 - Párhuzamosítás: **OpenCL**
 - Platformok: macOS (Apple M1) / Linux / Windows
+
+## Mérések
+
+A beadandóhoz készített mérések, diagramok és a jegyzőkönyv a beadandó/meresek/ mappában találhatóak.
