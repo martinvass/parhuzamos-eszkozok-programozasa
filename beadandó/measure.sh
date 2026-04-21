@@ -120,3 +120,27 @@ echo "=== Kesz! ==="
 echo "Eredmenyek: $OUTFILE"
 echo ""
 cat $OUTFILE
+
+echo ""
+echo "=== Elmeleti illesztes (f(N) = a*N^3) ==="
+
+# 'a' konstans kiszámítása a 10000-es mérésből
+SEQ_10000=$(grep "^10000;" $OUTFILE | cut -d';' -f2)
+A_CONST=$(awk "BEGIN {printf \"%.15e\", $SEQ_10000 / (10000.0^3)}")
+echo "a = $A_CONST"
+echo ""
+
+FITFILE="illesztes.csv"
+echo "N;SEQ_mert;SEQ_elmeleti;Elteres_mp;Elteres_pct" > $FITFILE
+
+while IFS=';' read -r N SEQ OCL SPDUP; do
+    [ "$N" = "N" ] && continue   # fejléc kihagyása
+    ELMELETI=$(awk "BEGIN {printf \"%.4f\", $A_CONST * ($N ^ 3)}")
+    DIFF=$(awk "BEGIN {printf \"%.4f\", $SEQ - $ELMELETI}")
+    PCT=$(awk "BEGIN {if ($SEQ > 0) printf \"%.2f\", ($SEQ - $ELMELETI) / $SEQ * 100; else print \"0.00\"}")
+    echo "  N=$N  Mert=${SEQ}s  Elmeleti=${ELMELETI}s  Elteres=${PCT}%"
+    echo "${N};${SEQ};${ELMELETI};${DIFF};${PCT}" >> $FITFILE
+done < $OUTFILE
+
+echo ""
+echo "Illesztesi eredmenyek: $FITFILE"
